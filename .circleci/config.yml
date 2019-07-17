@@ -1,0 +1,165 @@
+version: 2.1
+
+restore_cache: &restore_cache
+  - restore_cache:
+      key: multissl-{{ .Revision }}
+      
+save_cache: &save_cache
+  - save_cache:
+      key: multissl-{{ .Revision }}
+      paths:
+        - /cache
+
+# before_install template
+before_install: &before_install
+  - run:
+      name: Before Install
+      command: |
+        eval "${MATRIX_EVAL}"
+        if [ "$STATIC_CHECKS" = "yes" ]; then
+          unset SCONS_CACHE;
+        fi
+        
+# install template
+install: &install
+  - run:
+      name: Install
+      command: |
+        pip install --user scons;
+        if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$PLATFORM" = "android" ]; then
+          misc/travis/android-tools-linux.sh;
+        fi
+        if [ "$TRAVIS_OS_NAME" = "osx" ]; then
+          export PATH=${PATH}:/Users/travis/Library/Python/2.7/bin;
+        fi
+        if [ "$TRAVIS_OS_NAME" = "osx" ] && [ "$PLATFORM" = "android" ]; then
+          misc/travis/android-tools-osx.sh;
+        fi
+        
+# before_script template
+before_script: &before_script
+  - run:
+      name: Before Script
+      command: |
+        if [ "$PLATFORM" = "android" ]; then
+          export ANDROID_HOME=$TRAVIS_BUILD_DIR/godot-dev/build-tools/android-sdk;
+          export ANDROID_NDK_ROOT=$TRAVIS_BUILD_DIR/godot-dev/build-tools/android-ndk;
+        fi
+        
+# script template
+script: &script
+  - run:
+      name: Script
+      command: |
+        if [ "$STATIC_CHECKS" = "yes" ]; then
+          sh ./misc/travis/clang-format.sh;
+        else
+          scons -j2 CC=$CC CXX=$CXX platform=$PLATFORM tools=$TOOLS target=$TARGET $OPTIONS $EXTRA_ARGS;
+        fi
+        
+# interpolated variables template
+set_variables: &set_variables
+  - run:
+      name: Set Interpolated Variables
+      command: |
+        echo 'export SCONS_CACHE='"$HOME/.scons_cache" >> $BASH_ENV
+        echo 'SCONS_CACHE_LIMIT=1024' >> $BASH_ENV
+        echo 'OPTIONS="debug_symbols=no verbose=yes progress=no builtin_libpng=yes"' >> $BASH_ENV
+        # - secure: "uch9QszCgsl1qVbuzY41P7S2hWL2IiNFV4SbAYRCdi0oJ9MIu+pVyrQdpf3+jG4rH6j4Rffl+sN17Zz4dIDDioFL1JwqyCqyCyswR8uACC0Rr8gr4Mi3+HIRbv+2s2P4cIQq41JM8FJe84k9jLEMGCGh69w+ibCWoWs74CokYVA="
+        
+jobs:      
+  static-checks-clang-format:
+    environment:
+      STATIC_CHECKS: yes
+      TRAVIS_OS_NAME: linux
+    docker:
+      - image: buildpack-deps:xenial
+    steps:
+      - <<: *set_variables
+      - <<: *install_clang
+      - run: 
+          name: Installing APT Packages
+          command: apt-get update && apt-get install -y python3 tk-dev uuid-dev gdb xvfb
+      - checkout
+      - <<: *restore_cache
+      - <<: *before_install
+      - <<: *install
+      - <<: *before_script
+      - <<: *script      
+      - <<: *save_cache
+      
+  linux-editor-debug-GCC9-with-Mono:
+    environment:
+      STATIC_CHECKS: yes
+      TRAVIS_OS_NAME: linux
+    docker:
+      - image: buildpack-deps:xenial
+    steps:
+      - <<: *set_variables
+
+  linux-export-template-release-Clang:
+    environment:
+      STATIC_CHECKS: yes
+      TRAVIS_OS_NAME: linux
+    docker:
+      - image: buildpack-deps:xenial
+    steps:
+      - <<: *set_variables
+
+  android-export-template-release_debug-Clang:
+    environment:
+      STATIC_CHECKS: yes
+      TRAVIS_OS_NAME: linux
+    docker:
+      - image: buildpack-deps:xenial
+    steps:
+      - <<: *set_variables
+
+  macOS-editor-debug-Clang:
+    environment:
+      STATIC_CHECKS: yes
+      TRAVIS_OS_NAME: linux
+    docker:
+      - image: buildpack-deps:xenial
+    steps:
+      - <<: *set_variables
+
+  iOS-export-template-debug-Clang:
+    environment:
+      STATIC_CHECKS: yes
+      TRAVIS_OS_NAME: linux
+    docker:
+      - image: buildpack-deps:xenial
+    steps:
+      - <<: *set_variables
+
+  linux-headless-editor-release_debug-GCC9:
+    environment:
+      STATIC_CHECKS: yes
+      TRAVIS_OS_NAME: linux
+    docker:
+      - image: buildpack-deps:xenial
+    steps:
+      - <<: *set_variables
+
+  linux-export-template-release_debug-GCC5-without-3D-support:
+    environment:
+      STATIC_CHECKS: yes
+      TRAVIS_OS_NAME: linux
+    docker:
+      - image: buildpack-deps:xenial
+    steps:
+      - <<: *set_variables
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - static-checks-clang-format
+      - linux-editor-debug-GCC9-with-Mono
+      - linux-export-template-release-Clang
+      - android-export-template-release_debug-Clang
+      - macOS-editor-debug-Clang
+      - iOS-export-template-debug-Clang
+      - linux-headless-editor-release_debug-GCC9
+      - linux-export-template-release_debug-GCC5-without-3D-support
