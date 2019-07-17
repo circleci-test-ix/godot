@@ -111,6 +111,12 @@ jobs:
       - image: buildpack-deps:xenial
     steps:
       - <<: *set_variables
+      - <<: *restore_cache
+      - <<: *before_install
+      - <<: *install
+      - <<: *before_script
+      - <<: *script      
+      - <<: *save_cache
 
   linux-export-template-release-Clang:
     environment:
@@ -120,6 +126,12 @@ jobs:
       - image: buildpack-deps:xenial
     steps:
       - <<: *set_variables
+      - <<: *restore_cache
+      - <<: *before_install
+      - <<: *install
+      - <<: *before_script
+      - <<: *script      
+      - <<: *save_cache
 
   android-export-template-release_debug-Clang:
     environment:
@@ -129,6 +141,12 @@ jobs:
       - image: buildpack-deps:xenial
     steps:
       - <<: *set_variables
+      - <<: *restore_cache
+      - <<: *before_install
+      - <<: *install
+      - <<: *before_script
+      - <<: *script      
+      - <<: *save_cache
 
   macOS-editor-debug-Clang:
     environment:
@@ -138,6 +156,12 @@ jobs:
       - image: buildpack-deps:xenial
     steps:
       - <<: *set_variables
+      - <<: *restore_cache
+      - <<: *before_install
+      - <<: *install
+      - <<: *before_script
+      - <<: *script      
+      - <<: *save_cache
 
   iOS-export-template-debug-Clang:
     environment:
@@ -147,6 +171,12 @@ jobs:
       - image: buildpack-deps:xenial
     steps:
       - <<: *set_variables
+      - <<: *restore_cache
+      - <<: *before_install
+      - <<: *install
+      - <<: *before_script
+      - <<: *script      
+      - <<: *save_cache
 
   linux-headless-editor-release_debug-GCC9:
     environment:
@@ -156,6 +186,12 @@ jobs:
       - image: buildpack-deps:xenial
     steps:
       - <<: *set_variables
+      - <<: *restore_cache
+      - <<: *before_install
+      - <<: *install
+      - <<: *before_script
+      - <<: *script      
+      - <<: *save_cache
 
   linux-export-template-release_debug-GCC5-without-3D-support:
     environment:
@@ -165,6 +201,12 @@ jobs:
       - image: buildpack-deps:xenial
     steps:
       - <<: *set_variables
+      - <<: *restore_cache
+      - <<: *before_install
+      - <<: *install
+      - <<: *before_script
+      - <<: *script      
+      - <<: *save_cache
 
 workflows:
   version: 2
