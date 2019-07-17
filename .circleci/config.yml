@@ -94,7 +94,13 @@ jobs:
       - <<: *install_clang
       - run: 
           name: Installing APT Packages
-          command: apt-get update && apt-get install -y python3 tk-dev uuid-dev gdb xvfb
+          command: |
+            apt-get update
+            apt install -y software-properties-common
+            wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -        
+            apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-8 main"
+            apt-get update
+            apt-get install -y clang-format-8            
       - checkout
       - <<: *restore_cache
       - <<: *before_install
@@ -213,10 +219,10 @@ workflows:
   build_and_test:
     jobs:
       - static-checks-clang-format
-      - linux-editor-debug-GCC9-with-Mono
-      - linux-export-template-release-Clang
-      - android-export-template-release_debug-Clang
-      - macOS-editor-debug-Clang
-      - iOS-export-template-debug-Clang
-      - linux-headless-editor-release_debug-GCC9
-      - linux-export-template-release_debug-GCC5-without-3D-support
+#       - linux-editor-debug-GCC9-with-Mono
+#       - linux-export-template-release-Clang
+#       - android-export-template-release_debug-Clang
+#       - macOS-editor-debug-Clang
+#       - iOS-export-template-debug-Clang
+#       - linux-headless-editor-release_debug-GCC9
+#       - linux-export-template-release_debug-GCC5-without-3D-support
