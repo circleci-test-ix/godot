@@ -89,6 +89,7 @@ jobs:
       TRAVIS_OS_NAME: linux
     docker:
       - image: buildpack-deps:xenial
+      - image: circleci/python:3
     steps:
       - <<: *set_variables
       - <<: *install_clang
@@ -129,8 +130,7 @@ jobs:
       STATIC_CHECKS: yes
       TRAVIS_OS_NAME: linux
     docker:
-      - image: buildpack-deps:xenial
-      - image: circleci/python:3
+      - image: buildpack-deps:xenial      
     steps:
       - <<: *set_variables
       - <<: *restore_cache
