@@ -234,6 +234,7 @@ jobs:
       TARGET: debug
       CACHE_NAME: osx-tools-clang
       TRAVIS_OS_NAME: osx
+      MATRIX_EVAL: "CC=clang && CXX=clang++" 
     macos:
       xcode: "10.0.0"
     steps:
@@ -253,6 +254,7 @@ jobs:
       TARGET: debug
       CACHE_NAME: iphone-clang
       TRAVIS_OS_NAME: osx
+      MATRIX_EVAL: "CC=clang && CXX=clang++" 
     macos:
       xcode: "10.0.0"
     steps:
