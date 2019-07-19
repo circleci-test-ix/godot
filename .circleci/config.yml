@@ -95,7 +95,7 @@ install: &install
           misc/travis/android-tools-linux.sh;
         fi
         if [ "$TRAVIS_OS_NAME" = "osx" ]; then
-          export PATH=${PATH}:/Users/travis/Library/Python/2.7/bin;
+          echo 'export PATH='"${PATH}:/Users/travis/Library/Python/2.7/bin;" >> $BASH_ENV
         fi
         if [ "$TRAVIS_OS_NAME" = "osx" ] && [ "$PLATFORM" = "android" ]; then
           misc/travis/android-tools-osx.sh;
@@ -107,8 +107,8 @@ before_script: &before_script
       name: Before Script
       command: |
         if [ "$PLATFORM" = "android" ]; then
-          export ANDROID_HOME=$TRAVIS_BUILD_DIR/godot-dev/build-tools/android-sdk;
-          export ANDROID_NDK_ROOT=$TRAVIS_BUILD_DIR/godot-dev/build-tools/android-ndk;
+          echo 'export ANDROID_HOME='"$CIRCLE_WORKING_DIRECTORY/godot-dev/build-tools/android-sdk;" >> $BASH_ENV
+          echo 'export ANDROID_NDK_ROOT='"$CIRCLE_WORKING_DIRECTORY/godot-dev/build-tools/android-ndk;" >> $BASH_ENV
         fi
         
 # script template
