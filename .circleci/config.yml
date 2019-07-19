@@ -128,10 +128,7 @@ jobs:
       STATIC_CHECKS: "yes"
       TRAVIS_OS_NAME: linux
     docker:
-#       - image: circleci/buildpack-deps:xenial
-      - image: circleci/python:3
-#     machine:
-#       image: ubuntu-1604:201903-01
+      - image: circleci/python:2.7
     steps:
       - checkout
       - <<: *set_variables      
@@ -161,7 +158,7 @@ jobs:
       EXTRA_ARGS: "module_mono_enabled=yes mono_glue=no warnings=extra werror=yes"
       TRAVIS_OS_NAME: linux
     docker:
-      - image: circleci/buildpack-deps:xenial
+      - image: circleci/python:2.7
     steps:
       - checkout
       - <<: *set_variables
