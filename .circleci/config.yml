@@ -2,18 +2,18 @@ version: 2.1
 
 restore_cache: &restore_cache
   - restore_cache:
-      key: scons1-{{ arch }}
+      key: scons2-{{ arch }}
       
 save_cache: &save_cache
   - save_cache:
-      key: scons1-{{ arch }}
+      key: scons2-{{ arch }}
       paths:
 #         - /home/circleci/.scons_cache
         - /root/.scons_cache
         
 save_cache_linux: &save_cache_linux
   - save_cache:
-      key: scons1-{{ arch }}
+      key: scons2-{{ arch }}
       paths:
         - /home/circleci/.scons_cache
         
@@ -205,7 +205,7 @@ jobs:
       - <<: *install
       - <<: *before_script
       - <<: *script      
-      - <<: *save_cache
+      - <<: *save_cache_linux
 
   android-export-template-release_debug-Clang:
     environment:
@@ -226,7 +226,7 @@ jobs:
       - <<: *install
       - <<: *before_script
       - <<: *script      
-      - <<: *save_cache
+      - <<: *save_cache_linux
 
   macOS-editor-debug-Clang:
     environment:
@@ -290,7 +290,7 @@ jobs:
       - <<: *install
       - <<: *before_script
       - <<: *script      
-      - <<: *save_cache
+      - <<: *save_cache_linux
 
   linux-export-template-release_debug-GCC5-without-3D-support:
     environment:
@@ -312,7 +312,7 @@ jobs:
       - <<: *install
       - <<: *before_script
       - <<: *script      
-      - <<: *save_cache
+      - <<: *save_cache_linux
 
 workflows:
   version: 2
