@@ -187,10 +187,10 @@ jobs:
   linux-export-template-release-Clang:
     environment:
       PLATFORM: x11
-#       TOOLS: "no"
-#       TARGET: release
-      TOOLS: "yes"
-      TARGET: debug
+      TOOLS: "no"
+      TARGET: release
+#       TOOLS: "yes"
+#       TARGET: debug
       CACHE_NAME: x11-clang
       EXTRA_ARGS: "warnings=extra werror=yes"
       TRAVIS_OS_NAME: linux
