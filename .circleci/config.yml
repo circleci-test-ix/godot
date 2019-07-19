@@ -2,14 +2,20 @@ version: 2.1
 
 restore_cache: &restore_cache
   - restore_cache:
-      key: scons-{{ arch }}
+      key: scons1-{{ arch }}
       
 save_cache: &save_cache
   - save_cache:
-      key: scons-{{ arch }}
+      key: scons1-{{ arch }}
       paths:
 #         - /home/circleci/.scons_cache
         - /root/.scons_cache
+        
+save_cache: &save_cache_linux
+  - save_cache:
+      key: scons1-{{ arch }}
+      paths:
+        - /home/circleci/.scons_cache
         
 save_cache_macos: &save_cache_macos
   - save_cache:
@@ -162,8 +168,6 @@ jobs:
       MATRIX_EVAL: "CC=gcc-9 && CXX=g++-9" 
       EXTRA_ARGS: "module_mono_enabled=yes mono_glue=no warnings=extra werror=yes"
       TRAVIS_OS_NAME: linux
-#     docker:
-#       - image: circleci/python:2.7
     machine:
       image: ubuntu-1604:201903-01
     steps:
@@ -177,7 +181,7 @@ jobs:
       - <<: *install
       - <<: *before_script
       - <<: *script      
-      - <<: *save_cache
+      - <<: *save_cache_linux
 
   linux-export-template-release-Clang:
     environment:
