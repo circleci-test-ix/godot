@@ -50,8 +50,8 @@ install_linux_deps: &install_linux_deps
   - run:
       name: Install Linux Dependencies
       command: |
-        apt-get update
-        apt-get install -t libasound2-dev libgl1-mesa-dev libglu1-mesa-dev libx11-dev libxcursor-dev libxi-dev libxinerama-dev libxrandr-dev
+        sudo apt-get update
+        sudo apt-get install -y libasound2-dev libgl1-mesa-dev libglu1-mesa-dev libx11-dev libxcursor-dev libxi-dev libxinerama-dev libxrandr-dev
 
 install_mono_deps: &install_mono_deps
   - run:
@@ -61,7 +61,7 @@ install_mono_deps: &install_mono_deps
         sudo apt install apt-transport-https ca-certificates
         echo "deb https://download.mono-project.com/repo/ubuntu stable-xenial main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
         sudo apt update
-        sudo apt install mono-devel msbuild nuget
+        sudo apt install -y mono-devel msbuild nuget
 
 # before_install template
 before_install: &before_install
