@@ -239,7 +239,6 @@ jobs:
     steps:
       - checkout
       - <<: *set_variables
-      - <<: *install_clang
       - <<: *restore_cache
       - <<: *before_install
       - <<: *install
@@ -259,7 +258,6 @@ jobs:
     steps:
       - checkout
       - <<: *set_variables
-      - <<: *install_clang
       - <<: *set_variables
       - <<: *restore_cache
       - <<: *before_install
