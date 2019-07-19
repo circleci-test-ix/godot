@@ -11,7 +11,7 @@ save_cache: &save_cache
 #         - /home/circleci/.scons_cache
         - /root/.scons_cache
         
-save_cache: &save_cache_linux
+save_cache_linux: &save_cache_linux
   - save_cache:
       key: scons1-{{ arch }}
       paths:
