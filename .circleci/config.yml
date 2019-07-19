@@ -125,11 +125,11 @@ jobs:
     environment:
       STATIC_CHECKS: yes
       TRAVIS_OS_NAME: linux
-#     docker:
+    docker:
 #       - image: circleci/buildpack-deps:xenial
-#       - image: circleci/python:3
-    machine:
-      image: ubuntu-1604:201903-01
+      - image: circleci/python:3
+#     machine:
+#       image: ubuntu-1604:201903-01
     steps:
       - checkout
       - <<: *set_variables      
