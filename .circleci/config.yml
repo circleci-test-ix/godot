@@ -312,10 +312,10 @@ workflows:
   build_and_test:
     jobs:
 #       - static-checks-clang-format
-      - linux-editor-debug-GCC9-with-Mono
-#       - linux-export-template-release-Clang
-#       - android-export-template-release_debug-Clang
-#       - macOS-editor-debug-Clang
-#       - iOS-export-template-debug-Clang
-#       - linux-headless-editor-release_debug-GCC9
-#       - linux-export-template-release_debug-GCC5-without-3D-support
+#       - linux-editor-debug-GCC9-with-Mono
+      - linux-export-template-release-Clang
+      - android-export-template-release_debug-Clang
+      - macOS-editor-debug-Clang
+      - iOS-export-template-debug-Clang
+      - linux-headless-editor-release_debug-GCC9
+      - linux-export-template-release_debug-GCC5-without-3D-support
