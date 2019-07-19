@@ -1,26 +1,4 @@
-version: 2.1
-
-restore_cache: &restore_cache
-  - restore_cache:
-      key: scons2-{{ arch }}
-      
-save_cache: &save_cache
-  - save_cache:
-      key: scons2-{{ arch }}
-      paths:
-        - /root/.scons_cache
-        
-save_cache_linux: &save_cache_linux
-  - save_cache:
-      key: scons2-{{ arch }}
-      paths:
-        - /home/circleci/.scons_cache
-        
-save_cache_macos: &save_cache_macos
-  - save_cache:
-      key: scons-{{ arch }}
-      paths:
-        - /Users/distiller/.scons_cache        
+version: 2.1    
         
 install_clang: &install_clang
   - run:
@@ -147,20 +125,18 @@ jobs:
             sudo wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -        
             sudo apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-8 main"
             sudo apt-get update
-            sudo apt-get install -y clang-format-8                  
-      - <<: *restore_cache
+            sudo apt-get install -y clang-format-8
       - <<: *before_install
       - <<: *install
       - <<: *before_script
-      - <<: *script      
-      - <<: *save_cache
+      - <<: *script
       
   linux-editor-debug-GCC9-with-Mono:
     environment:
       PLATFORM: x11
       TOOLS: "yes"
       TARGET: debug
-      CACHE_NAME: x11-tools-mono-gcc-9
+#       CACHE_NAME: x11-tools-mono-gcc-9
       MATRIX_EVAL: "CC=gcc-9 && CXX=g++-9" 
       EXTRA_ARGS: "module_mono_enabled=yes mono_glue=no warnings=extra werror=yes"
       TRAVIS_OS_NAME: linux
@@ -168,46 +144,54 @@ jobs:
       image: ubuntu-1604:201903-01
     steps:
       - checkout
+      - restore_cache:
+          key: scons-x11-tools-mono-gcc-9
       - <<: *set_variables
       - <<: *install_gcc-9
       - <<: *install_linux_deps
-      - <<: *install_mono_deps
-      - <<: *restore_cache
+      - <<: *install_mono_deps      
       - <<: *before_install
       - <<: *install
       - <<: *before_script
       - <<: *script      
-      - <<: *save_cache_linux
+      - save_cache:
+          key: scons-x11-tools-mono-gcc-9
+          paths:
+            - /home/circleci/.scons_cache
 
   linux-export-template-release-Clang:
     environment:
       PLATFORM: x11
       TOOLS: "no"
       TARGET: release
-      CACHE_NAME: x11-clang
+#       CACHE_NAME: x11-clang
       EXTRA_ARGS: "warnings=extra werror=yes"
       TRAVIS_OS_NAME: linux
       MATRIX_EVAL: "CC=clang && CXX=clang++" 
     machine:
       image: ubuntu-1604:201903-01    
     steps:
-      - checkout      
+      - checkout
+      - restore_cache:
+          key: scons-x11-clang
       - <<: *set_variables
       - <<: *install_clang
-      - <<: *install_linux_deps
-      - <<: *restore_cache
+      - <<: *install_linux_deps      
       - <<: *before_install
       - <<: *install
       - <<: *before_script
       - <<: *script      
-      - <<: *save_cache_linux
+      - save_cache:
+          key: scons-x11-clang
+          paths:
+            - /home/circleci/.scons_cache
 
   android-export-template-release_debug-Clang:
     environment:
       PLATFORM: android
       TOOLS: "no"
       TARGET: release_debug
-      CACHE_NAME: android-clang
+#       CACHE_NAME: android-clang
       EXTRA_ARGS: "warnings=extra werror=yes"
       TRAVIS_OS_NAME: linux
       MATRIX_EVAL: "CC=clang && CXX=clang++" 
@@ -215,62 +199,74 @@ jobs:
       image: ubuntu-1604:201903-01
     steps:
       - checkout
+      - restore_cache:
+          key: scons-android-clang
       - <<: *set_variables
       - <<: *install_clang
-      - <<: *restore_cache
       - <<: *before_install
       - <<: *install
       - <<: *before_script
       - <<: *script      
-      - <<: *save_cache_linux
+      - save_cache:
+          key: scons-android-clang
+          paths:
+            - /home/circleci/.scons_cache
 
   macOS-editor-debug-Clang:
     environment:
       PLATFORM: osx
       TOOLS: "yes"
       TARGET: debug
-      CACHE_NAME: osx-tools-clang
+#       CACHE_NAME: osx-tools-clang
       TRAVIS_OS_NAME: osx
       MATRIX_EVAL: "CC=clang && CXX=clang++" 
     macos:
       xcode: "10.0.0"
     steps:
       - checkout
-      - <<: *set_variables
-      - <<: *restore_cache
+      - restore_cache:
+          key: scons-osx-tools-clang
+      - <<: *set_variables      
       - <<: *before_install
       - <<: *install
       - <<: *before_script
       - <<: *script      
-      - <<: *save_cache_macos
+      - save_cache:
+          key: scons-osx-tools-clang
+          paths:
+            - /Users/distiller/.scons_cache
 
   iOS-export-template-debug-Clang:
     environment:
       PLATFORM: iphone
       TOOLS: "no"
       TARGET: debug
-      CACHE_NAME: iphone-clang
+#       CACHE_NAME: iphone-clang
       TRAVIS_OS_NAME: osx
       MATRIX_EVAL: "CC=clang && CXX=clang++" 
     macos:
       xcode: "10.0.0"
     steps:
       - checkout
+      - restore_cache:
+          key: scons-iphone-clang
       - <<: *set_variables
       - <<: *set_variables
-      - <<: *restore_cache
       - <<: *before_install
       - <<: *install
       - <<: *before_script
       - <<: *script      
-      - <<: *save_cache_macos
+      - save_cache:
+          key: scons-iphone-clang
+          paths:
+            - /Users/distiller/.scons_cache
 
   linux-headless-editor-release_debug-GCC9:
     environment:
       PLATFORM: server
       TOOLS: "yes"
       TARGET: release_debug
-      CACHE_NAME: server-tools-gcc-9
+#       CACHE_NAME: server-tools-gcc-9
       MATRIX_EVAL: "CC=gcc-9 && CXX=g++-9"
       EXTRA_ARGS: "warnings=extra werror=yes"
       TRAVIS_OS_NAME: linux
@@ -278,22 +274,26 @@ jobs:
       image: ubuntu-1604:201903-01
     steps:
       - checkout
+      - restore_cache:
+          key: scons-server-tools-gcc-9
       - <<: *set_variables
       - <<: *install_gcc-9
       - <<: *install_linux_deps
-      - <<: *restore_cache
       - <<: *before_install
       - <<: *install
       - <<: *before_script
       - <<: *script      
-      - <<: *save_cache_linux
+      - save_cache:
+          key: scons-server-tools-gcc-9
+          paths:
+            - /home/circleci/.scons_cache
 
   linux-export-template-release_debug-GCC5-without-3D-support:
     environment:
       PLATFORM: x11
       TOOLS: "no"
       TARGET: release_debug
-      CACHE_NAME: x11-gcc-5
+#       CACHE_NAME: x11-gcc-5
       EXTRA_ARGS: "disable_3d=yes"
       TRAVIS_OS_NAME: linux
       MATRIX_EVAL: "CC=gcc && CXX=g++" 
@@ -301,14 +301,18 @@ jobs:
       image: ubuntu-1604:201903-01
     steps:
       - checkout
+      - restore_cache:
+          key: scons-x11-gcc-5
       - <<: *set_variables
       - <<: *install_linux_deps
-      - <<: *restore_cache
       - <<: *before_install
       - <<: *install
       - <<: *before_script
       - <<: *script      
-      - <<: *save_cache_linux
+      - save_cache:
+          key: scons-x11-gcc-5
+          paths:
+            - /home/circleci/.scons_cache
 
 workflows:
   version: 2
