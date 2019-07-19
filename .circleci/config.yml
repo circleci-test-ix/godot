@@ -200,7 +200,7 @@ jobs:
     steps:
       - checkout      
       - <<: *set_variables
-#       - <<: *install_clang
+      - <<: *install_clang
       - <<: *install_linux_deps
       - <<: *restore_cache
       - <<: *before_install
