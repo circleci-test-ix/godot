@@ -192,12 +192,13 @@ jobs:
       CACHE_NAME: x11-clang
       EXTRA_ARGS: "warnings=extra werror=yes"
       TRAVIS_OS_NAME: linux
+      MATRIX_EVAL: "CC=clang && CXX=clang++" 
     machine:
       image: ubuntu-1604:201903-01    
     steps:
       - checkout      
       - <<: *set_variables
-      - <<: *install_clang
+#       - <<: *install_clang
       - <<: *install_linux_deps
       - <<: *restore_cache
       - <<: *before_install
