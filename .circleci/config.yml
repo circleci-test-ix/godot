@@ -189,8 +189,6 @@ jobs:
       PLATFORM: x11
       TOOLS: "no"
       TARGET: release
-#       TOOLS: "yes"
-#       TARGET: debug
       CACHE_NAME: x11-clang
       EXTRA_ARGS: "warnings=extra werror=yes"
       TRAVIS_OS_NAME: linux
@@ -217,6 +215,7 @@ jobs:
       CACHE_NAME: android-clang
       EXTRA_ARGS: "warnings=extra werror=yes"
       TRAVIS_OS_NAME: linux
+      MATRIX_EVAL: "CC=clang && CXX=clang++" 
     machine:
       image: ubuntu-1604:201903-01
     steps:
@@ -322,8 +321,8 @@ workflows:
     jobs:
 #       - static-checks-clang-format
 #       - linux-editor-debug-GCC9-with-Mono
-      - linux-export-template-release-Clang
-#       - android-export-template-release_debug-Clang
+#       - linux-export-template-release-Clang
+      - android-export-template-release_debug-Clang
 #       - macOS-editor-debug-Clang
 #       - iOS-export-template-debug-Clang
 #       - linux-headless-editor-release_debug-GCC9
