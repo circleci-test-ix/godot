@@ -191,8 +191,8 @@ jobs:
       CACHE_NAME: x11-clang
       EXTRA_ARGS: "warnings=extra werror=yes"
       TRAVIS_OS_NAME: linux
-    docker:
-      - image: buildpack-deps:xenial      
+    machine:
+      image: ubuntu-1604:201903-01    
     steps:
       - checkout      
       - <<: *set_variables
@@ -213,8 +213,8 @@ jobs:
       CACHE_NAME: android-clang
       EXTRA_ARGS: "warnings=extra werror=yes"
       TRAVIS_OS_NAME: linux
-    docker:
-      - image: buildpack-deps:xenial
+    machine:
+      image: ubuntu-1604:201903-01
     steps:
       - checkout
       - <<: *set_variables
@@ -276,8 +276,8 @@ jobs:
       MATRIX_EVAL: "CC=gcc-9 && CXX=g++-9"
       EXTRA_ARGS: "warnings=extra werror=yes"
       TRAVIS_OS_NAME: linux
-    docker:
-      - image: buildpack-deps:xenial
+    machine:
+      image: ubuntu-1604:201903-01
     steps:
       - checkout
       - <<: *set_variables
@@ -298,8 +298,8 @@ jobs:
       CACHE_NAME: x11-gcc-5
       EXTRA_ARGS: "disable_3d=yes"
       TRAVIS_OS_NAME: linux
-    docker:
-      - image: buildpack-deps:xenial
+    machine:
+      image: ubuntu-1604:201903-01
     steps:
       - checkout
       - <<: *set_variables
