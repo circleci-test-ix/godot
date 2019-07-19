@@ -188,7 +188,8 @@ jobs:
     environment:
       PLATFORM: x11
       TOOLS: "no"
-      TARGET: release
+#       TARGET: release
+      TARGET: debug
       CACHE_NAME: x11-clang
       EXTRA_ARGS: "warnings=extra werror=yes"
       TRAVIS_OS_NAME: linux
@@ -321,8 +322,8 @@ workflows:
 #       - static-checks-clang-format
 #       - linux-editor-debug-GCC9-with-Mono
       - linux-export-template-release-Clang
-      - android-export-template-release_debug-Clang
-      - macOS-editor-debug-Clang
-      - iOS-export-template-debug-Clang
-      - linux-headless-editor-release_debug-GCC9
-      - linux-export-template-release_debug-GCC5-without-3D-support
+#       - android-export-template-release_debug-Clang
+#       - macOS-editor-debug-Clang
+#       - iOS-export-template-debug-Clang
+#       - linux-headless-editor-release_debug-GCC9
+#       - linux-export-template-release_debug-GCC5-without-3D-support
