@@ -104,7 +104,6 @@ script: &script
   - run:
       name: Script
       command: |
-        echo "$STATIC_CHECKS"
         if [ "$STATIC_CHECKS" = "yes" ]; then
           sh ./misc/travis/clang-format.sh;
         else
@@ -308,8 +307,8 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - static-checks-clang-format
-#       - linux-editor-debug-GCC9-with-Mono
+#       - static-checks-clang-format
+      - linux-editor-debug-GCC9-with-Mono
 #       - linux-export-template-release-Clang
 #       - android-export-template-release_debug-Clang
 #       - macOS-editor-debug-Clang
