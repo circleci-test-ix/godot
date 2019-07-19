@@ -95,7 +95,7 @@ install: &install
           misc/travis/android-tools-linux.sh;
         fi
         if [ "$TRAVIS_OS_NAME" = "osx" ]; then
-          echo 'export PATH='"${PATH}:/Users/travis/Library/Python/2.7/bin;" >> $BASH_ENV
+          echo 'export PATH='"${PATH}:/Users/distiller/Library/Python/2.7/bin;" >> $BASH_ENV
         fi
         if [ "$TRAVIS_OS_NAME" = "osx" ] && [ "$PLATFORM" = "android" ]; then
           misc/travis/android-tools-osx.sh;
