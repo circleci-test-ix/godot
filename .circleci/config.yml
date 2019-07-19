@@ -74,9 +74,7 @@ before_install: &before_install
         fi
         
 # install template
-install: &install
-  # update PATH so pip installs are accessible
-  - run: echo 'export PATH=/home/circleci/.local/bin:$PATH' >> $BASH_ENV
+install: &install  
   - run:
       name: Install
       command: |
@@ -117,6 +115,8 @@ set_variables: &set_variables
   - run:
       name: Set Interpolated Variables
       command: |
+        # update PATH so pip installs are accessible
+        echo 'export PATH=/home/circleci/.local/bin:$PATH' >> $BASH_ENV
         echo 'export SCONS_CACHE='"$HOME/.scons_cache" >> $BASH_ENV
         echo 'SCONS_CACHE_LIMIT=1024' >> $BASH_ENV
         echo 'OPTIONS="debug_symbols=no verbose=yes progress=no builtin_libpng=yes"' >> $BASH_ENV
@@ -156,7 +156,7 @@ jobs:
       PLATFORM: x11
       TOOLS: yes
       TARGET: debug
-      CACHE_NAME: ${PLATFORM}-tools-mono-gcc-9
+      CACHE_NAME: x11-tools-mono-gcc-9
       MATRIX_EVAL: "CC=gcc-9 && CXX=g++-9" 
       EXTRA_ARGS: "module_mono_enabled=yes mono_glue=no warnings=extra werror=yes"
       TRAVIS_OS_NAME: linux
@@ -180,7 +180,7 @@ jobs:
       PLATFORM: x11
       TOOLS: no
       TARGET: release
-      CACHE_NAME: ${PLATFORM}-clang
+      CACHE_NAME: x11-clang
       EXTRA_ARGS: "warnings=extra werror=yes"
       TRAVIS_OS_NAME: linux
     docker:
@@ -202,7 +202,7 @@ jobs:
       PLATFORM: android
       TOOLS: no
       TARGET: release_debug
-      CACHE_NAME: ${PLATFORM}-clang
+      CACHE_NAME: android-clang
       EXTRA_ARGS: "warnings=extra werror=yes"
       TRAVIS_OS_NAME: linux
     docker:
@@ -223,7 +223,7 @@ jobs:
       PLATFORM: osx
       TOOLS: yes
       TARGET: debug
-      CACHE_NAME: ${PLATFORM}-tools-clang
+      CACHE_NAME: osx-tools-clang
       TRAVIS_OS_NAME: osx
     macos:
       xcode: "10.0.0"
@@ -243,7 +243,7 @@ jobs:
       PLATFORM: iphone
       TOOLS: no
       TARGET: debug
-      CACHE_NAME: ${PLATFORM}-clang
+      CACHE_NAME: iphone-clang
       TRAVIS_OS_NAME: osx
     macos:
       xcode: "10.0.0"
@@ -264,7 +264,7 @@ jobs:
       PLATFORM: server
       TOOLS: yes
       TARGET: release_debug
-      CACHE_NAME: ${PLATFORM}-tools-gcc-9
+      CACHE_NAME: server-tools-gcc-9
       MATRIX_EVAL: "CC=gcc-9 && CXX=g++-9"
       EXTRA_ARGS: "warnings=extra werror=yes"
       TRAVIS_OS_NAME: linux
@@ -287,7 +287,7 @@ jobs:
       PLATFORM: x11
       TOOLS: no
       TARGET: release_debug
-      CACHE_NAME: ${PLATFORM}-gcc-5
+      CACHE_NAME: x11-gcc-5
       EXTRA_ARGS: "disable_3d=yes"
       TRAVIS_OS_NAME: linux
     docker:
