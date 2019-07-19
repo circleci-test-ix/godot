@@ -75,6 +75,7 @@ before_install: &before_install
   - run:
       name: Before Install
       command: |
+        echo "${MATRIX_EVAL}" >> $BASH_ENV
         if [ "$STATIC_CHECKS" = "yes" ]; then
           unset SCONS_CACHE;
         fi
