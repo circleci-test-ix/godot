@@ -53,7 +53,7 @@ install_linux_deps: &install_linux_deps
         apt-get update
         apt-get install -t libasound2-dev libgl1-mesa-dev libglu1-mesa-dev libx11-dev libxcursor-dev libxi-dev libxinerama-dev libxrandr-dev
 
-install_linux_mono_deps: &install_linux_mono_deps
+install_mono_deps: &install_mono_deps
   - run:
       name: Install Linux Mono Dependencies
       command: |
