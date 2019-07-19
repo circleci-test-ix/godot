@@ -222,7 +222,7 @@ jobs:
       CACHE_NAME: ${PLATFORM}-tools-clang
       TRAVIS_OS_NAME: osx
     macos:
-      - xcode: "10.0.0"
+      xcode: "10.0.0"
     steps:
       - checkout
       - <<: *set_variables
@@ -242,7 +242,7 @@ jobs:
       CACHE_NAME: ${PLATFORM}-clang
       TRAVIS_OS_NAME: osx
     macos:
-      - xcode: "10.0.0"
+      xcode: "10.0.0"
     steps:
       - checkout
       - <<: *set_variables
