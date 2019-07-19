@@ -126,7 +126,7 @@ set_variables: &set_variables
 jobs:      
   static-checks-clang-format:
     environment:
-      STATIC_CHECKS: yes
+      STATIC_CHECKS: "yes"
       TRAVIS_OS_NAME: linux
     docker:
 #       - image: circleci/buildpack-deps:xenial
@@ -155,7 +155,7 @@ jobs:
   linux-editor-debug-GCC9-with-Mono:
     environment:
       PLATFORM: x11
-      TOOLS: yes
+      TOOLS: "yes"
       TARGET: debug
       CACHE_NAME: x11-tools-mono-gcc-9
       MATRIX_EVAL: "CC=gcc-9 && CXX=g++-9" 
@@ -179,7 +179,7 @@ jobs:
   linux-export-template-release-Clang:
     environment:
       PLATFORM: x11
-      TOOLS: no
+      TOOLS: "no"
       TARGET: release
       CACHE_NAME: x11-clang
       EXTRA_ARGS: "warnings=extra werror=yes"
@@ -201,7 +201,7 @@ jobs:
   android-export-template-release_debug-Clang:
     environment:
       PLATFORM: android
-      TOOLS: no
+      TOOLS: "no"
       TARGET: release_debug
       CACHE_NAME: android-clang
       EXTRA_ARGS: "warnings=extra werror=yes"
@@ -222,7 +222,7 @@ jobs:
   macOS-editor-debug-Clang:
     environment:
       PLATFORM: osx
-      TOOLS: yes
+      TOOLS: "yes"
       TARGET: debug
       CACHE_NAME: osx-tools-clang
       TRAVIS_OS_NAME: osx
@@ -242,7 +242,7 @@ jobs:
   iOS-export-template-debug-Clang:
     environment:
       PLATFORM: iphone
-      TOOLS: no
+      TOOLS: "no"
       TARGET: debug
       CACHE_NAME: iphone-clang
       TRAVIS_OS_NAME: osx
@@ -263,7 +263,7 @@ jobs:
   linux-headless-editor-release_debug-GCC9:
     environment:
       PLATFORM: server
-      TOOLS: yes
+      TOOLS: "yes"
       TARGET: release_debug
       CACHE_NAME: server-tools-gcc-9
       MATRIX_EVAL: "CC=gcc-9 && CXX=g++-9"
@@ -286,7 +286,7 @@ jobs:
   linux-export-template-release_debug-GCC5-without-3D-support:
     environment:
       PLATFORM: x11
-      TOOLS: no
+      TOOLS: "no"
       TARGET: release_debug
       CACHE_NAME: x11-gcc-5
       EXTRA_ARGS: "disable_3d=yes"
