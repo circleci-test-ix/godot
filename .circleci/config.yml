@@ -2,13 +2,20 @@ version: 2.1
 
 restore_cache: &restore_cache
   - restore_cache:
-      key: multissl-{{ .Revision }}
+      key: scons-{{ arch }}
       
 save_cache: &save_cache
   - save_cache:
-      key: multissl-{{ .Revision }}
+      key: scons-{{ arch }}
       paths:
-        - /cache
+#         - /home/circleci/.scons_cache
+        - /root/.scons_cache
+        
+save_cache_macos: &save_cache_macos
+  - save_cache:
+      key: scons-{{ arch }}
+      paths:
+        - /Users/distiller/.scons_cache        
         
 install_clang: &install_clang
   - run:
@@ -17,13 +24,44 @@ install_clang: &install_clang
         apt-get update
         apt install -y software-properties-common
         wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -        
-        apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial main"
+        apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-7 main"
         apt-get update
-        apt-get install -y clang
+        apt-get install -y clang-7 lldb-7 lld-7        
+        update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-7 1000
+        update-alternatives --install /usr/bin/clang clang /usr/bin/clang-7 1000
+        update-alternatives --config clang
+        update-alternatives --config clang++
         # Set compiler to clang 
         echo 'export CC=${CC:-clang}' >> $BASH_ENV
         echo 'export CC_FOR_BUILD=${CC_FOR_BUILD:-clang}' >> $BASH_ENV
         clang --version        
+        
+install_gcc-9: &install_gcc-9
+  - run:
+      name: Install GCC 9
+      command: |
+        apt-get update
+        apt install -y software-properties-common
+        add-apt-repository ppa:ubuntu-toolchain-r/test
+        apt-get update
+        apt-get install -y gcc-9 g++-9
+        
+install_linux_deps: &install_linux_deps
+  - run:
+      name: Install Linux Dependencies
+      command: |
+        apt-get update
+        apt-get install -t libasound2-dev libgl1-mesa-dev libglu1-mesa-dev libx11-dev libxcursor-dev libxi-dev libxinerama-dev libxrandr-dev
+
+install_linux_mono_deps: &install_linux_mono_deps
+  - run:
+      name: Install Linux Mono Dependencies
+      command: |
+        sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+        sudo apt install apt-transport-https ca-certificates
+        echo "deb https://download.mono-project.com/repo/ubuntu stable-xenial main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
+        sudo apt update
+        sudo apt install mono-devel msbuild nuget
 
 # before_install template
 before_install: &before_install
@@ -88,11 +126,11 @@ jobs:
       STATIC_CHECKS: yes
       TRAVIS_OS_NAME: linux
     docker:
-      - image: buildpack-deps:xenial
+      - image: circleci/buildpack-deps:xenial
       - image: circleci/python:3
     steps:
-      - <<: *set_variables
-      - <<: *install_clang
+      - checkout
+      - <<: *set_variables      
       - run: 
           name: Installing APT Packages
           command: |
@@ -101,8 +139,7 @@ jobs:
             wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -        
             apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-8 main"
             apt-get update
-            apt-get install -y clang-format-8            
-      - checkout
+            apt-get install -y clang-format-8                  
       - <<: *restore_cache
       - <<: *before_install
       - <<: *install
@@ -112,12 +149,21 @@ jobs:
       
   linux-editor-debug-GCC9-with-Mono:
     environment:
-      STATIC_CHECKS: yes
+      PLATFORM: x11
+      TOOLS: yes
+      TARGET: debug
+      CACHE_NAME: ${PLATFORM}-tools-mono-gcc-9
+      MATRIX_EVAL: "CC=gcc-9 && CXX=g++-9" 
+      EXTRA_ARGS: "module_mono_enabled=yes mono_glue=no warnings=extra werror=yes"
       TRAVIS_OS_NAME: linux
     docker:
-      - image: buildpack-deps:xenial
+      - image: circleci/buildpack-deps:xenial
     steps:
+      - checkout
       - <<: *set_variables
+      - <<: *install_gcc-9
+      - <<: *install_linux_deps
+      - <<: *install_mono_deps
       - <<: *restore_cache
       - <<: *before_install
       - <<: *install
@@ -127,12 +173,19 @@ jobs:
 
   linux-export-template-release-Clang:
     environment:
-      STATIC_CHECKS: yes
+      PLATFORM: x11
+      TOOLS: no
+      TARGET: release
+      CACHE_NAME: ${PLATFORM}-clang
+      EXTRA_ARGS: "warnings=extra werror=yes"
       TRAVIS_OS_NAME: linux
     docker:
       - image: buildpack-deps:xenial      
     steps:
+      - checkout      
       - <<: *set_variables
+      - <<: *install_clang
+      - <<: *install_linux_deps
       - <<: *restore_cache
       - <<: *before_install
       - <<: *install
@@ -142,12 +195,18 @@ jobs:
 
   android-export-template-release_debug-Clang:
     environment:
-      STATIC_CHECKS: yes
+      PLATFORM: android
+      TOOLS: no
+      TARGET: release_debug
+      CACHE_NAME: ${PLATFORM}-clang
+      EXTRA_ARGS: "warnings=extra werror=yes"
       TRAVIS_OS_NAME: linux
     docker:
       - image: buildpack-deps:xenial
     steps:
+      - checkout
       - <<: *set_variables
+      - <<: *install_clang
       - <<: *restore_cache
       - <<: *before_install
       - <<: *install
@@ -157,42 +216,61 @@ jobs:
 
   macOS-editor-debug-Clang:
     environment:
-      STATIC_CHECKS: yes
-      TRAVIS_OS_NAME: linux
-    docker:
-      - image: buildpack-deps:xenial
+      PLATFORM: osx
+      TOOLS: yes
+      TARGET: debug
+      CACHE_NAME: ${PLATFORM}-tools-clang
+      TRAVIS_OS_NAME: osx
+    macos:
+      - xcode: "10.0.0"
     steps:
+      - checkout
       - <<: *set_variables
+      - <<: *install_clang
       - <<: *restore_cache
       - <<: *before_install
       - <<: *install
       - <<: *before_script
       - <<: *script      
-      - <<: *save_cache
+      - <<: *save_cache_macos
 
   iOS-export-template-debug-Clang:
     environment:
-      STATIC_CHECKS: yes
-      TRAVIS_OS_NAME: linux
-    docker:
-      - image: buildpack-deps:xenial
+      PLATFORM: iphone
+      TOOLS: no
+      TARGET: debug
+      CACHE_NAME: ${PLATFORM}-clang
+      TRAVIS_OS_NAME: osx
+    macos:
+      - xcode: "10.0.0"
     steps:
+      - checkout
+      - <<: *set_variables
+      - <<: *install_clang
       - <<: *set_variables
       - <<: *restore_cache
       - <<: *before_install
       - <<: *install
       - <<: *before_script
       - <<: *script      
-      - <<: *save_cache
+      - <<: *save_cache_macos
 
   linux-headless-editor-release_debug-GCC9:
     environment:
-      STATIC_CHECKS: yes
+      PLATFORM: server
+      TOOLS: yes
+      TARGET: release_debug
+      CACHE_NAME: ${PLATFORM}-tools-gcc-9
+      MATRIX_EVAL: "CC=gcc-9 && CXX=g++-9"
+      EXTRA_ARGS: "warnings=extra werror=yes"
       TRAVIS_OS_NAME: linux
     docker:
       - image: buildpack-deps:xenial
     steps:
+      - checkout
       - <<: *set_variables
+      - <<: *install_gcc-9
+      - <<: *install_linux_deps
       - <<: *restore_cache
       - <<: *before_install
       - <<: *install
@@ -202,12 +280,18 @@ jobs:
 
   linux-export-template-release_debug-GCC5-without-3D-support:
     environment:
-      STATIC_CHECKS: yes
+      PLATFORM: x11
+      TOOLS: no
+      TARGET: release_debug
+      CACHE_NAME: ${PLATFORM}-gcc-5
+      EXTRA_ARGS: "disable_3d=yes"
       TRAVIS_OS_NAME: linux
     docker:
       - image: buildpack-deps:xenial
     steps:
+      - checkout
       - <<: *set_variables
+      - <<: *install_linux_deps
       - <<: *restore_cache
       - <<: *before_install
       - <<: *install
