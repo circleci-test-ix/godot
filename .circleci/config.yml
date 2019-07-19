@@ -75,6 +75,8 @@ before_install: &before_install
         
 # install template
 install: &install
+  # update PATH so pip installs are accessible
+  - run: echo 'export PATH=/home/circleci/.local/bin:$PATH' >> $BASH_ENV
   - run:
       name: Install
       command: |
