@@ -78,10 +78,9 @@ before_install: &before_install
       name: Before Install
       command: |
         echo "${MATRIX_EVAL}"
+        echo "${MATRIX_EVAL}" >> $BASH_ENV
         echo "${CC}"
         echo "${CXX}"
-        #echo "${MATRIX_EVAL}" >> $BASH_ENV
-        #eval "${MATRIX_EVAL}"
         if [ "$STATIC_CHECKS" = "yes" ]; then
           unset SCONS_CACHE;
         fi
@@ -300,7 +299,7 @@ jobs:
       CACHE_NAME: x11-gcc-5
       EXTRA_ARGS: "disable_3d=yes"
       TRAVIS_OS_NAME: linux
-#       MATRIX_EVAL: "CC=gcc && CXX=g++" 
+      MATRIX_EVAL: "CC=gcc && CXX=g++" 
     machine:
       image: ubuntu-1604:201903-01
     steps:
