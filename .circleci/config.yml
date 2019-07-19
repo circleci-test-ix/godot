@@ -8,7 +8,6 @@ save_cache: &save_cache
   - save_cache:
       key: scons2-{{ arch }}
       paths:
-#         - /home/circleci/.scons_cache
         - /root/.scons_cache
         
 save_cache_linux: &save_cache_linux
@@ -48,8 +47,7 @@ install_gcc-9: &install_gcc-9
       command: |
         sudo apt-get update
         sudo apt install -y software-properties-common
-        #sudo apt-key adv --recv-key 1E9377A2BA9EF27F         
-        #sudo apt-add-repository "deb http://ppa.launchpad.net/ubuntu-toolchain-r/test/ubuntu xenial main"
+        #sudo apt-key adv --recv-key 1E9377A2BA9EF27F
         sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test        
         sudo apt-get update
         sudo apt install -y gcc-9 g++-9
@@ -77,10 +75,6 @@ before_install: &before_install
   - run:
       name: Before Install
       command: |
-        echo "${MATRIX_EVAL}"
-        echo "${MATRIX_EVAL}" >> $BASH_ENV
-        echo "${CC}"
-        echo "${CXX}"
         if [ "$STATIC_CHECKS" = "yes" ]; then
           unset SCONS_CACHE;
         fi
@@ -319,11 +313,11 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-#       - static-checks-clang-format
-#       - linux-editor-debug-GCC9-with-Mono
-#       - linux-export-template-release-Clang
+      - static-checks-clang-format
+      - linux-editor-debug-GCC9-with-Mono
+      - linux-export-template-release-Clang
       - android-export-template-release_debug-Clang
-#       - macOS-editor-debug-Clang
-#       - iOS-export-template-debug-Clang
-#       - linux-headless-editor-release_debug-GCC9
-#       - linux-export-template-release_debug-GCC5-without-3D-support
+      - macOS-editor-debug-Clang
+      - iOS-export-template-debug-Clang
+      - linux-headless-editor-release_debug-GCC9
+      - linux-export-template-release_debug-GCC5-without-3D-support
