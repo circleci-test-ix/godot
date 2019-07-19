@@ -104,6 +104,7 @@ script: &script
   - run:
       name: Script
       command: |
+        echo "$STATIC_CHECKS"
         if [ "$STATIC_CHECKS" = "yes" ]; then
           sh ./misc/travis/clang-format.sh;
         else
